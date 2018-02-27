@@ -73,3 +73,13 @@ def obtieneFacebookObjectComments(status_id, access_token, num_comments):
         return None
     else:
         return json.loads(data)
+
+
+# Dado el id de un post devuelve un objeto JSON con los datos de su arista /reactions
+def obtieneReactionsForPost(post_id, access_token ):
+    base = "https://graph.facebook.com"
+    node = "/%s/reactions?limit=2000" % post_id
+    parameters = "&access_token=%s" % (access_token)
+    url = base + node + parameters
+    data = json.loads(request_until_succeed(url))
+    return(data)
