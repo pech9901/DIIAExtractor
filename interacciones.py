@@ -1,6 +1,7 @@
 import psycopg2
 import interacciones.facebookPosts as infp
 import interacciones.facebookComments as infc
+import interacciones.facebookReactions as infr
 
 
 # Id de grupo - debe obtenerse de la tabla cursos
@@ -17,6 +18,7 @@ except Exception as e:
 def getFacebookInteractions(group_id, access_token, dbConnect):
     infp.almacenaFacebookPosts(group_id, access_token, dbConnect)
     infc.almacenaFacebookPostsComments(group_id, access_token, dbConnect)
+    infr.almacenaFacebookPostsReactions (group_id,access_token,dbConnect)
     dbConnect.close()
 
 
