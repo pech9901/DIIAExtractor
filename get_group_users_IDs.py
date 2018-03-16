@@ -6,6 +6,7 @@ import interacciones.scrape_functions as insf
 
 # Id de grupo - debe obtenerse de la tabla cursos
 group_id = 1268404236573400
+access_token = "1205790082775855|701e1f6d986822a19cf4f579868a2d72"
 
 # Conexión a la Base de datos
 try:
