@@ -1,6 +1,7 @@
 import json
 import psycopg2
-import interacciones.scrapeFunctions as insf
+import interacciones.scrape_functions as insf
+import interacciones.db_functions as indb
 
 
 # Dado el id de un post y su arista /comments en formato JSON devuelve una tupla con los datos de la arista
@@ -43,10 +44,7 @@ def almacenaSubComments(comment, author_id, access_token, group_id, dbConnect):
             while has_next_subpage:
                 for subcomment in subcomments['data']:
                     proceso_subcomment = (procesaFacebookComment(subcomment, parent_id))
-                    id = subcomment['id'] + str(x)
-                    # Por ahora dejo el id de Facebook, luego cambio por CI
                     author_facebook_id = proceso_subcomment[0]
-                    id_nodo_destino = author_id
                     tipo_contenido = proceso_subcomment[1]
                     text_contenido = proceso_subcomment[2]
                     datatime_published = proceso_subcomment[3]
@@ -56,11 +54,14 @@ def almacenaSubComments(comment, author_id, access_token, group_id, dbConnect):
                                         (comment_id,))  # Existe el registro?
                         existe_reg = cursor.fetchone()
                         if not existe_reg:
+                            curso_id = indb.getCursoID (group_id,dbConnect)
+                            nodo_id = indb.getNodoId (group_id,author_facebook_id,dbConnect)
+                            id_nodo_destino = indb.getNodoId (group_id,author_id,dbConnect)
                             cursor.execute(
-                                "INSERT INTO interaccion (id_interaccion, nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
+                                "INSERT INTO interaccion (nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
                             tipo_contenido, contenido, plataforma, timestamp, id_origen)\
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s); ",
-                                (id, author_facebook_id, id_nodo_destino, '4', group_id, tipo_contenido, text_contenido, '1',
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s); ",
+                                (nodo_id, id_nodo_destino, '4', curso_id, tipo_contenido, text_contenido, '1',
                                  datatime_published, comment_id))
                     except psycopg2.Error as e:
                         print("PostgreSQL Error: " + e.diag.message_primary)
@@ -81,7 +82,7 @@ def almacenaFacebookPostsComments(group_id, access_token, dbConnect):
     cursor = dbConnect.cursor()
     statusIDS = insf.obtieneFacebookPostsIDAuthorID(group_id, access_token, 100)
     has_next_page_ST = True
-    id = 1000
+
     while has_next_page_ST:
         for statusID in statusIDS['data']:
             has_next_page = True
@@ -90,11 +91,8 @@ def almacenaFacebookPostsComments(group_id, access_token, dbConnect):
             comments = insf.obtieneFacebookObjectComments(status_id, access_token, 100)
             while has_next_page and comments is not None:
                 for comment in comments['data']:
-                    id = id + 1
                     proceso_comment = procesaFacebookComment(comment, status_id)
-                    # Por ahora dejo el id de Facebook, luego cambio por CI
                     author_facebook_id = proceso_comment[0]
-                    id_nodo_destino = status_author
                     tipo_contenido = proceso_comment[1]
                     text_contenido = proceso_comment[2]
                     datatime_published = proceso_comment[3]
@@ -104,16 +102,19 @@ def almacenaFacebookPostsComments(group_id, access_token, dbConnect):
                                         (comment_id,))  # Existe el registro?
                         existe_reg = cursor.fetchone()
                         if not existe_reg:
+                            curso_id = indb.getCursoID (group_id,dbConnect)
+                            nodo_id = indb.getNodoId (group_id,author_facebook_id,dbConnect)
+                            id_nodo_destino=indb.getNodoId(group_id,status_author,dbConnect)
                             cursor.execute(
-                                "INSERT INTO interaccion (id_interaccion, nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
+                                "INSERT INTO interaccion (nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
                                 tipo_contenido, contenido, plataforma, timestamp, id_origen)\
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s); ",
-                                (id, author_facebook_id, id_nodo_destino, '4', group_id, tipo_contenido, text_contenido, '1',
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s); ",
+                                (nodo_id, id_nodo_destino, '4', curso_id, tipo_contenido, text_contenido, '1',
                                  datatime_published, comment_id))
                     except psycopg2.Error as e:
                         print("PostgreSQL Error: " + e.diag.message_primary)
                         continue
-                    num_processed += 1
+
                     dbConnect.commit()
                     almacenaSubComments(comment, author_facebook_id, access_token, group_id, dbConnect)
                 if 'paging' in comments:

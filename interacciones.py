@@ -1,7 +1,8 @@
 import psycopg2
-import interacciones.facebookPosts as infp
-import interacciones.facebookComments as infc
-import interacciones.facebookReactions as infr
+import interacciones.facebook_posts as infp
+import interacciones.facebook_comments as infc
+import interacciones.facebook_reactions as infr
+
 
 
 # Id de grupo - debe obtenerse de la tabla cursos
