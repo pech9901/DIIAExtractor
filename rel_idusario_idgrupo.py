@@ -5,7 +5,7 @@ import psycopg2
 import interacciones.scrape_functions as insf
 
 # Id de grupo - debe obtenerse de la tabla cursos
-#group_id = Valid group_id1268404236573400
+#group_id = Valid group_id
 #access_token = Valid access_token
 
 # Conexión a la Base de datos
