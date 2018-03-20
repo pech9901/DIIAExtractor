@@ -6,10 +6,9 @@ import interacciones.facebook_reactions as infr
 
 
 # Id de grupo - debe obtenerse de la tabla cursos
-#group_id = Valid group_id1268404236573400
+#group_id = Valid group_id1
 #access_token = Valid access_token
-group_id = 1268404236573400
-access_token = "1205790082775855|701e1f6d986822a19cf4f579868a2d72"
+
 
 
 # Conexión a la Base de datos
