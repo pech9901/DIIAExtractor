@@ -1,24 +1,28 @@
 import psycopg2
 
-import get_group_users_IDs as ougi
+import rel_idusario_idgrupo as ougi
 
-# Id de grupo - debe obtenerse de la tabla cursos
-group_id = 1268404236573400
-access_token = "1205790082775855|701e1f6d986822a19cf4f579868a2d72"
-
-# Conexión a la Base de datos
-try:
-    dbConnect = psycopg2.connect("dbname='diia' user='postgres' host='localhost' password='123'")
-except Exception as e:
-    print(e)
-
+#Devuelve True si user_id de Facebook es miembro del grupo group_id de Facebook, False en caso contrario
+def isgroupmember (user_id,group_id ,dbConnect):
+    cursor = dbConnect.cursor ( )
+    try:
+        cursor.execute (
+            "SELECT 1 FROM idusuarioidgrupo WHERE idusuarioidgrupo.id_grupo = %s AND user_facebook_group_id= %s ;",
+            (str (group_id),user_id,))
+    except psycopg2.Error as e:
+        print ("PostgreSQL Error: " + e.diag.message_primary)
+    existe_reg = cursor.fetchone ( )
+    if existe_reg:
+        return True
+    else:
+        return False
 
 # Obtiene el id de un nodo a partir de su id de grupo de Facebook
 def getNodoId (group_id, user_group_id, dbConnect):
     cursor = dbConnect.cursor ( )
     try:
         cursor.execute (
-            "SELECT user_facebook_id FROM estudiantegrupofacebook WHERE estudiantegrupofacebook.id_grupo = %s AND user_facebook_group_id= %s ;",
+            "SELECT user_facebook_id FROM idusuarioidgrupo WHERE idusuarioidgrupo.id_grupo = %s AND user_facebook_group_id= %s ;",
             (str (group_id),user_group_id,))
         user_id = cursor.fetchone ( )[0]
         cursor.execute ("SELECT 1 FROM estudiante WHERE estudiante.id_facebook= %s ;",(str (user_id),))
@@ -47,11 +51,3 @@ def getCursoID (group_id, dbConnect):
     return curso_id
 
 
-if __name__ == '__main__':
-    grupo_face_ids = ougi.getGroupMembers (group_id,access_token)
-    miembros_face_ids= ougi.processGroupMembers (grupo_face_ids)
-    curso= getCursoID(group_id,dbConnect)
-
-    for info in miembros_face_ids:
-        ci=getNodoId (group_id,info['id'],dbConnect)
-        print(ci)
