@@ -5,8 +5,8 @@ import psycopg2
 import interacciones.scrape_functions as insf
 
 # Id de grupo - debe obtenerse de la tabla cursos
-group_id = 1268404236573400
-access_token = "1205790082775855|701e1f6d986822a19cf4f579868a2d72"
+#group_id = Valid group_id1268404236573400
+#access_token = Valid access_token
 
 # Conexión a la Base de datos
 try:
@@ -81,11 +81,11 @@ def almacenaUserGroupId (group_id, user_id, access_token, dbConnect):
         user_data=getUserInfo(user_id, access_token)
         if user_data['name'] == member_data['name']:
             try:
-                cursor.execute("SELECT 1 FROM estudiantegrupofacebook WHERE estudiantegrupofacebook.user_facebook_group_id = %s ;",(member_data['id'],))#Existe el registro?
+                cursor.execute("SELECT 1 FROM idusuarioidgrupo WHERE idusuarioidgrupo.user_facebook_group_id = %s ;",(member_data['id'],))#Existe el registro?
                 existe_reg = cursor.fetchone()
                 if not existe_reg:
                     cursor.execute(
-                                    "INSERT INTO estudiantegrupofacebook (id_grupo, user_facebook_id, user_facebook_group_id) VALUES (%s, %s, %s); ",
+                                    "INSERT INTO idusuarioidgrupo (id_grupo, user_facebook_id, user_facebook_group_id) VALUES (%s, %s, %s); ",
                                     (group_id, user_data['id'], member_data['id']))
             except psycopg2.Error as e:
                 print("PostgreSQL Error: " + e.diag.message_primary)
