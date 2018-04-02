@@ -12,15 +12,15 @@ def procesaFacebookPosts(status):
     link_name = '' if 'name' not in status.keys() else \
         insf.unicode_normalize(status['name'])
     if status['type'] == 'status':
-        status_type = '1'
+        status_type = 'tex'
     elif status['type'] == 'photo':
-        status_type = '2'
+        status_type = 'img'
     elif status['type'] == 'link':
-        status_type = '3'
+        status_type = 'lik'
     elif status['type'] == 'video':
-        status_type = '4'
+        status_type = 'vid'
     else:
-        status_type = '10'
+        status_type = 'des'
     status_author = status['from']['id']
     status_published = insf.formatCreatedTime(status['created_time'])
     # Devuelve una tupla con los datos procesados
@@ -52,7 +52,7 @@ def almacenaFacebookPosts(group_id, access_token, dbConnect):
                         cursor.execute("INSERT INTO interaccion (nodo_origen, tipo_interaccion, id_curso_origen,\
                                 tipo_contenido, contenido, plataforma, timestamp, id_origen)\
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s); ", (
-                                nodo_id, '4', curso_id, tipo_contenido, text_contenido, '1',
+                                nodo_id, 'pos', curso_id, tipo_contenido, text_contenido, 'f',
                                 datatime_published, status_id))
 
                 except psycopg2.Error as e:

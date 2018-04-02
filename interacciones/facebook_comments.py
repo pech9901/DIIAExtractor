@@ -14,21 +14,21 @@ def procesaFacebookComment(comment, status_id):
         comment_message = attach_tag if comment_message is '' else \
             (comment_message + " " + attach_tag).encode("utf-8")
         if attach_tag == '':
-            comment_type = '1'
+            comment_type = 'tex'
         elif attach_tag == 'photo':
-            comment_type = '2'
+            comment_type = 'img'
         elif attach_tag == 'share':
-            comment_type = '3'
+            comment_type = 'lik'
         elif attach_tag == 'video_inline' or attach_tag == 'video_share_youtube':
-            comment_type = '4'
+            comment_type = 'vid'
         elif attach_tag == 'animated_image_share':
-            comment_type = '5'
+            comment_type = 'gif'
         elif attach_tag == 'sticker':
-            comment_type = '6'
+            comment_type = 'sck'
         else:
-            comment_type = '10'
+            comment_type = 'des'
     else:
-        comment_type = '1'
+        comment_type = 'tex'
     comment_published = insf.formatCreatedTime(comment['created_time'])
 
     return (comment_author, comment_type, comment_message, comment_published, comment_id)
@@ -61,7 +61,7 @@ def almacenaSubComments(comment, author_id, access_token, group_id, dbConnect):
                                 "INSERT INTO interaccion (nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
                             tipo_contenido, contenido, plataforma, timestamp, id_origen)\
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s); ",
-                                (nodo_id, id_nodo_destino, '4', curso_id, tipo_contenido, text_contenido, '1',
+                                (nodo_id, id_nodo_destino, 'com', curso_id, tipo_contenido, text_contenido, 'f',
                                  datatime_published, comment_id))
                     except psycopg2.Error as e:
                         print("PostgreSQL Error: " + e.diag.message_primary)
@@ -109,7 +109,7 @@ def almacenaFacebookPostsComments(group_id, access_token, dbConnect):
                                 "INSERT INTO interaccion (nodo_origen, nodo_destino, tipo_interaccion, id_curso_origen,\
                                 tipo_contenido, contenido, plataforma, timestamp, id_origen)\
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s); ",
-                                (nodo_id, id_nodo_destino, '4', curso_id, tipo_contenido, text_contenido, '1',
+                                (nodo_id, id_nodo_destino, 'com', curso_id, tipo_contenido, text_contenido, 'f',
                                  datatime_published, comment_id))
                     except psycopg2.Error as e:
                         print("PostgreSQL Error: " + e.diag.message_primary)
