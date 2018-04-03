@@ -52,7 +52,7 @@ def almacenaFacebookPosts(group_id, access_token, dbConnect):
                         cursor.execute("INSERT INTO interaccion (nodo_origen, tipo_interaccion, id_curso_origen,\
                                 tipo_contenido, contenido, plataforma, timestamp, id_origen)\
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s); ", (
-                                nodo_id, 'pos', curso_id, tipo_contenido, text_contenido, 'f',
+                                nodo_id, 'pub', curso_id, tipo_contenido, text_contenido, 'f',
                                 datatime_published, status_id))
 
                 except psycopg2.Error as e:
